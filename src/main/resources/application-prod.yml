@@ -40,4 +40,8 @@ audit:
     refill-tokens: ${RATE_LIMIT_RPM:60}
     refill-duration-seconds: 60
   cors:
-    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000,https://krishnaqwerty.github.io,https://pulse.krishnakumar.tech}
+    allowed-origins:
+      - "http://localhost:3000"
+      - "http://localhost:5173"
+      - "https://krishnaqwerty.github.io"
+      - "https://pulse.krishnakumar.tech"
