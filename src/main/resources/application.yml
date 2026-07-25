@@ -88,3 +88,23 @@ audit:
   concurrency:
     max-concurrent-audits: 50
     acquire-timeout-ms: 1000
+  cors:
+    allowed-origins:
+      - "http://localhost:3000"
+      - "https://krishnaqwerty.github.io"
+      - "https://pulse.krishnakumar.tech"
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+    allowed-headers:
+      - "*"
+    exposed-headers:
+      - Location
+      - X-Request-ID
+      - X-Correlation-ID
+    allow-credentials: false
+    max-age-seconds: 3600

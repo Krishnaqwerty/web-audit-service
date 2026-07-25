@@ -39,3 +39,5 @@ audit:
     capacity: ${RATE_LIMIT_RPM:60}
     refill-tokens: ${RATE_LIMIT_RPM:60}
     refill-duration-seconds: 60
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000,https://krishnaqwerty.github.io,https://pulse.krishnakumar.tech}
