@@ -15,5 +15,5 @@ public class HttpClientProperties {
     private String userAgent = "WebAuditService/1.0 (+https://webaudit.internal)";
     private boolean followRedirects = true;
     private int maxRedirects = 3;
-    private long maxBodySizeBytes = 2097152; // 2 MB
+    private int maxBodySizeBytes = 10485760; // 10 MB
 }

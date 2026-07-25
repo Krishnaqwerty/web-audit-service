@@ -99,6 +99,10 @@ public class AuditServiceImpl implements AuditService {
                             metricsService.recordExternalFailure();
                             return new TargetConnectionException(targetUrl, e.getMessage());
                         })
+                        .onErrorMap(org.springframework.core.io.buffer.DataBufferLimitException.class, e -> {
+                            metricsService.recordExternalFailure();
+                            return new TargetConnectionException(targetUrl, "Response body size exceeded buffer limit of " + httpClientProperties.getMaxBodySizeBytes() + " bytes");
+                        })
                         .block();
 
                 long durationMs = System.currentTimeMillis() - startTimeMs;

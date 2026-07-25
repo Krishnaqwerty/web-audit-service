@@ -45,6 +45,7 @@ public class HttpClientConfig {
 
         return webClientBuilder
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(properties.getMaxBodySizeBytes()))
                 .defaultHeader(HttpHeaders.USER_AGENT, properties.getUserAgent())
                 .build();
     }
