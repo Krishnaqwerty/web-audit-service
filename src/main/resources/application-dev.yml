@@ -1,0 +1,30 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    root: INFO
+    com.webaudit: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [req_id=%X{requestId}] %msg%n"
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+    include-exception: true
+
+audit:
+  rate-limiter:
+    enabled: true
+    capacity: 300
+    refill-tokens: 300
+    refill-duration-seconds: 60
+  logging:
+    include-headers: true
+    max-payload-length: 4096

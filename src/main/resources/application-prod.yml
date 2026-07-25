@@ -1,0 +1,41 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,application/javascript,application/json
+    min-response-size: 1024
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+logging:
+  level:
+    root: WARN
+    com.webaudit: INFO
+    org.springframework: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [req_id=%X{requestId}] %msg%n"
+
+audit:
+  http-client:
+    connect-timeout-ms: ${HTTP_CONNECT_TIMEOUT_MS:3000}
+    read-timeout-ms: ${HTTP_READ_TIMEOUT_MS:5000}
+    write-timeout-ms: ${HTTP_WRITE_TIMEOUT_MS:5000}
+    max-connections: ${HTTP_MAX_CONNECTIONS:200}
+  cache:
+    caffeine:
+      initial-capacity: ${CACHE_INITIAL_CAPACITY:500}
+      maximum-size: ${CACHE_MAX_SIZE:50000}
+      expire-after-write-minutes: ${CACHE_TTL_MINUTES:30}
+  rate-limiter:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    capacity: ${RATE_LIMIT_RPM:60}
+    refill-tokens: ${RATE_LIMIT_RPM:60}
+    refill-duration-seconds: 60
