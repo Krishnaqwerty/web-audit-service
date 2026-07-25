@@ -1,0 +1,90 @@
+spring:
+  application:
+    name: web-audit-service
+  profiles:
+    active: dev
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: ALWAYS
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      webClientCircuitBreaker:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50.0
+        waitDurationInOpenState: 10000ms
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  retry:
+    instances:
+      webClientRetry:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2.0
+        retryExceptions:
+          - java.io.IOException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+
+audit:
+  app:
+    name: Web Audit Service
+    version: 0.1.0-SNAPSHOT
+  http-client:
+    connect-timeout-ms: 3000
+    read-timeout-ms: 5000
+    write-timeout-ms: 5000
+    max-connections: 100
+    max-connections-per-route: 20
+    connection-idle-timeout-sec: 30
+    user-agent: WebAuditService/1.0 (+https://webaudit.internal)
+    follow-redirects: true
+    max-redirects: 3
+    max-body-size-bytes: 2097152
+  cache:
+    caffeine:
+      initial-capacity: 100
+      maximum-size: 10000
+      expire-after-write-minutes: 15
+  rate-limiter:
+    enabled: true
+    capacity: 60
+    refill-tokens: 60
+    refill-duration-seconds: 60
+  logging:
+    include-query-params: true
+    include-headers: false
+    max-payload-length: 1000
+  timeouts:
+    default-audit-ms: 10000
+  concurrency:
+    max-concurrent-audits: 50
+    acquire-timeout-ms: 1000
