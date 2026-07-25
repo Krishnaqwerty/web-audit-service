@@ -1,7 +1,14 @@
 target/
 .git
-.gitignore
+.github
 .idea
+.vscode
 *.iml
-docs/
 README.md
+Dockerfile
+docker-compose.yml
+render.yaml
+docs/
+.DS_Store
+*.log
+*.tmp

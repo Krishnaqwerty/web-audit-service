@@ -2,44 +2,44 @@
 
 > **Enterprise-Grade URL Auditing REST API built with Java 21 LTS and Spring Boot 3.4+**
 
-The **Web Audit Service** is a high-throughput, production-grade URL auditing REST API designed according to **Clean / Hexagonal Architecture** principles. It features defense-in-depth Server-Side Request Forgery (SSRF) security, Java 21 Virtual Threads (Project Loom) for non-blocking I/O, Caffeine L1 caching, Bucket4j token-bucket rate limiting, Resilience4j circuit breakers, Micrometer Prometheus metrics, and native Render deployment support.
+The **Web Audit Service** is a high-throughput, production-grade URL auditing REST API designed according to **Clean / Hexagonal Architecture** principles. It features defense-in-depth Server-Side Request Forgery (SSRF) security, Java 21 Virtual Threads (Project Loom) for non-blocking I/O, Caffeine L1 caching, Bucket4j token-bucket rate limiting, Resilience4j circuit breakers, Micrometer Prometheus metrics, and multi-stage Docker deployment.
 
 ---
 
-## Live Deployment (Render)
+## Live Deployment & Container Operations
 
-The application is pre-configured for automated native Java deployment on **Render (Free Web Service)** using `render.yaml`.
+The application is fully containerized and pre-configured for automated **Docker-based deployment on Render** via `render.yaml` Blueprint.
 
 - **Live Application URL**: `https://web-audit-service.onrender.com/`
 - **Interactive Swagger UI**: `https://web-audit-service.onrender.com/swagger-ui/index.html`
 - **Health Check Endpoint**: `https://web-audit-service.onrender.com/actuator/health`
 - **Prometheus Metrics**: `https://web-audit-service.onrender.com/actuator/prometheus`
 
-### Render Configuration & Commands
-- **Runtime**: Native Java 21
-- **Build Command**: `mvn clean package -DskipTests`
-- **Start Command**: `java -jar target/web-audit-service-0.1.0-SNAPSHOT.jar --spring.profiles.active=prod`
-- **Health Check Path**: `/actuator/health`
+### Docker Container Commands
 
-### Environment Variables
-| Variable | Description | Default Value |
-|----------|-------------|---------------|
-| `PORT` | Injected by Render for HTTP binding | `8080` |
-| `SPRING_PROFILES_ACTIVE` | Active Spring profile | `prod` |
-| `HTTP_CONNECT_TIMEOUT_MS` | Outbound HTTP Connect Timeout (ms) | `3000` |
-| `HTTP_READ_TIMEOUT_MS` | Outbound HTTP Read Timeout (ms) | `5000` |
-| `HTTP_WRITE_TIMEOUT_MS` | Outbound HTTP Write Timeout (ms) | `5000` |
-| `CACHE_INITIAL_CAPACITY` | Caffeine Initial Capacity | `100` |
-| `CACHE_MAX_SIZE` | Caffeine Max Cache Capacity | `10000` |
-| `CACHE_TTL_MINUTES` | Caffeine Cache TTL (minutes) | `15` |
-| `RATE_LIMIT_ENABLED` | Bucket4j Rate Limiting Active Flag | `true` |
-| `RATE_LIMIT_RPM` | Client Rate Limit Capacity (Requests per minute) | `60` |
+#### 1. Build Local Docker Image
+```bash
+docker build -t web-audit-service .
+```
 
-### Deployment Steps (Render Blueprint)
+#### 2. Run Local Docker Container
+```bash
+docker run -d -p 8080:8080 \
+  -e SPRING_PROFILES_ACTIVE=prod \
+  --name web-audit-service \
+  web-audit-service
+```
+
+#### 3. Run with Docker Compose
+```bash
+docker-compose up --build -d
+```
+
+### Render Blueprint Deployment Instructions
 1. Push this repository to GitHub.
-2. Sign in to [Render Console](https://dashboard.render.com/) and click **New +** -> **Blueprint**.
-3. Connect your repository. Render automatically reads `render.yaml` and provisions the Native Java service.
-4. Deployment completes automatically; subsequent pushes to `main` auto-deploy.
+2. Log in to [Render Dashboard](https://dashboard.render.com/) and click **New +** -> **Blueprint**.
+3. Connect your repository. Render automatically reads `render.yaml`, detects `runtime: docker`, and builds the image using `./Dockerfile`.
+4. Subsequent pushes to `main` trigger zero-downtime automated redeployments.
 
 ---
 
@@ -159,43 +159,8 @@ The application is pre-configured for automated native Java deployment on **Rend
 }
 ```
 
-#### Rate Limit Response: `429 Too Many Requests`
-```http
-HTTP/1.1 429 Too Many Requests
-Content-Type: application/json
-Retry-After: 60
-X-Request-ID: 4d9e1f2a-3b4c-5d6e-7f8a-9b0c1d2e3f4a
-```
-```json
-{
-  "timestamp": "2026-07-25T23:00:10Z",
-  "requestId": "4d9e1f2a-3b4c-5d6e-7f8a-9b0c1d2e3f4a",
-  "status": 429,
-  "error": "RATE_LIMIT_EXCEEDED",
-  "message": "Rate limit exceeded for IP address '192.168.1.100'. Please wait before sending more requests.",
-  "path": "/api/v1/audits"
-}
-```
-
 ---
 
-## Running Locally
+## License
 
-### Prerequisites
-- JDK 21+ (e.g. Eclipse Temurin or OpenJDK 21)
-- Apache Maven 3.8+
-
-### Build & Run
-```bash
-# Clone the repository
-git clone https://github.com/company/web-audit-service.git
-cd web-audit-service
-
-# Run unit and integration tests
-mvn clean test
-
-# Start service with DEV profile
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
-```
-
-Access Swagger UI at `http://localhost:8080/swagger-ui/index.html`.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

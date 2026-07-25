@@ -1,10 +1,10 @@
 services:
   - type: web
     name: web-audit-service
-    runtime: java
+    runtime: docker
     plan: free
-    buildCommand: mvn clean package -DskipTests
-    startCommand: java -jar target/web-audit-service-0.1.0-SNAPSHOT.jar --spring.profiles.active=prod
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     healthCheckPath: /actuator/health
     autoDeploy: true
     envVars:

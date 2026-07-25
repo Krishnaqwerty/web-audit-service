@@ -2,23 +2,23 @@
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
 
-# Copy Maven wrapper & pom.xml
+# Copy Maven wrapper & pom.xml for dependency caching
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline -B || true
+RUN chmod +x ./mvnw && ./mvnw dependency:go-offline -B || true
 
 # Copy source code and package application
 COPY src/ src/
-RUN ./mvnw clean package -DskipTests --no-daemon
+RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Runtime stage
 FROM eclipse-temurin:21-jre-alpine AS runner
 WORKDIR /app
 
-# Create non-root application user
+# Create non-root application user for security hardening
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Copy compiled JAR artifact
+# Copy compiled JAR artifact without hardcoding original filename
 COPY --from=builder /app/target/*.jar app.jar
 
 # Enforce unprivileged user
