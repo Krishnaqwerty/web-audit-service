@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: web-audit-service
+    env: java
+    javaVersion: 21
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/web-audit-service-0.1.0-SNAPSHOT.jar --spring.profiles.active=prod
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: HTTP_CONNECT_TIMEOUT_MS
+        value: "3000"
+      - key: HTTP_READ_TIMEOUT_MS
+        value: "5000"
+      - key: HTTP_WRITE_TIMEOUT_MS
+        value: "5000"
+      - key: CACHE_INITIAL_CAPACITY
+        value: "100"
+      - key: CACHE_MAX_SIZE
+        value: "10000"
+      - key: CACHE_TTL_MINUTES
+        value: "15"
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: RATE_LIMIT_RPM
+        value: "60"
